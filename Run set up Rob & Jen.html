@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cognitive Science Lab | Shoe Shopping & Morning Run Setup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        :root { 
+            --primary: #9b59b6; 
+            --primary-dark: #8e44ad;
+            --success: #2ecc71; 
+            --danger: #e74c3c; 
+            --warning: #f1c40f; 
+            --bg: #130f40; 
+            --card-bg: rgba(19, 15, 64, 0.95);
+            --accent: #e67e22; 
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: linear-gradient(135deg, #090720, #17124a, #30336b); 
+            color: #ecf0f1; 
+            text-align: center; 
+            margin: 0; 
+            min-height: 100vh; 
+            padding-bottom: 90px; 
+            touch-action: manipulation;
+        }
+        .container { max-width: 900px; margin: auto; padding: 20px 15px; }
+        h1 { color: var(--primary); text-shadow: 2px 2px #000; font-size: 1.8rem; margin-bottom: 5px; }
+        .branding { color: var(--warning); font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; }
+        .sub-branding { color: #dff9fb; font-size: 0.85rem; margin-bottom: 20px; font-style: italic; }
+        
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
+            border: 2px solid var(--primary); 
+        }
+
+        .live-stream-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed var(--primary);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            min-height: 40px;
+            font-style: italic;
+            color: #e056fd;
+            text-align: left;
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
+
+        .results-box { 
+            background: #080618; 
+            border-left: 6px solid var(--accent); 
+            padding: 18px; 
+            margin: 15px 0; 
+            border-radius: 12px; 
+            text-align: left; 
+            display: none; 
+        }
+        .syntax-error { color: var(--danger); font-weight: bold; }
+        .correct-word { color: var(--success); font-weight: bold; }
+        .partial-word { color: var(--warning); font-style: italic; border-bottom: 1px dashed var(--warning); }
+        .remedial-tip { 
+            margin-top: 12px; 
+            padding: 12px; 
+            background: rgba(230, 126, 34, 0.15); 
+            border-radius: 8px; 
+            border: 1px solid var(--accent);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        select, button { 
+            padding: 14px 20px; border-radius: 10px; margin: 6px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; 
+            font-size: 1rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        button { background: var(--primary); color: #ffffff; }
+        button:active { filter: brightness(1.2); }
+        .btn-record { background: var(--danger); color: white; }
+        .btn-record.recording { background: #c0392b; animation: pulse 1.5s infinite; }
+        .btn-next { background: var(--success); color: white; display: none; }
+        .option { 
+            display: block; width: 100%; margin: 10px 0; padding: 16px; background: #221e5c; border-radius: 12px; cursor: pointer; text-align: left; border: 2px solid transparent; color: white; box-sizing: border-box; font-size: 1rem; line-height: 1.4;
+        }
+        .option:active { border-color: var(--warning); background: #2c2773; }
+        .correct { background: var(--success) !important; border-color: #fff; }
+        .wrong { background: var(--danger) !important; }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        footer {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #080618; color: #95afc0; padding: 10px 0; font-size: 0.8rem; border-top: 1px solid #221e5c; letter-spacing: 1px; z-index: 10;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0px 0px rgba(231, 76, 60, 0.7); } 70% { box-shadow: 0 0 0px 15px rgba(231, 76, 60, 0); } 100% { box-shadow: 0 0 0px 0px rgba(231, 76, 60, 0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">    
+    <h1>Cognitive Science Lab</h1>    
+    <div class="branding">By Coach Carlos O</div>    
+    <div class="sub-branding">Module: Shoe Shopping & Morning Run Setup</div>
+    
+    <div id="setup">        
+        <div class="card">            
+            <h3 style="color: var(--primary); margin-bottom: 12px;">Select Your Cognitive Complexity Level:</h3>            
+            <select id="levelSelect" style="background: #221e5c; color: white; border: 1px solid var(--primary);">                
+                <option value="A2">A2 (Elementary: Time Negotiations & Vocabulary Self-Correction)</option>                
+                <option value="B1">B1 (Intermediate: Cultural Dialects & Schedule Compromises)</option>            
+                <option value="C1">C1 (Advanced: Pragmatic Reluctance & Conversational Subtext)</option>            
+            </select><br>            
+            <button onclick="startQuiz()" style="margin-top: 15px;">Initialize Fluency Module</button>        
+        </div>    
+    </div>    
+    
+    <div id="quiz-area" style="display:none;">        
+        <div id="progress" style="margin-bottom:12px; color:var(--warning); font-weight:bold; letter-spacing: 1px; font-size: 0.9rem;"></div>        
+
+        <div id="quiz"></div>                
+        
+        <div id="liveStream" class="live-stream-box">
+            🎙️ Continuous Listening: <span id="streamText">Click "Verify Fluency" to begin speaking...</span>
+        </div>
+
+        <div id="resultsBox" class="results-box">            
+            <h4 style="color:var(--primary); margin-top:0;">Neural Speech Feedback:</h4>            
+            <div id="visualFeedback" style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 10px;"></div>            
+            <div id="evaluationText" style="font-weight: bold; color: var(--warning); margin-bottom: 10px;"></div>            
+            <div id="remedialBox"></div>        
+        </div>        
+        
+        <div class="action-buttons">            
+            <button onclick="narrateCurrentAnswer()" style="background:var(--warning); color: #2c3e50;">🔊 Model Accent (US)</button>            
+            <button id="recordBtn" class="btn-record" onclick="toggleRecording()">🎤 Verify Fluency</button>            
+            <button id="nextBtn" class="btn-next" onclick="nextQuestion()">Advance Module ➜</button>        
+        </div>    
+    </div>
+</div>
+
+<footer>
+    © Developed for educational excellence By Coach Carlos O
+</footer>
+
+<script>
+const synth = window.speechSynthesis;
+let usVoice = null;
+let isAudioUnlocked = false;
+
+// Mobile Audio Warm-Up Trigger
+function unlockSpeechEngine() {
+    if (!isAudioUnlocked && synth) {
+        const dummyUtterance = new SpeechSynthesisUtterance('');
+        dummyUtterance.volume = 0;
+        synth.speak(dummyUtterance);
+        isAudioUnlocked = true;
+    }
+}
+document.addEventListener('touchstart', unlockSpeechEngine, { once: true });
+document.addEventListener('click', unlockSpeechEngine, { once: true });
+
+function loadNativeVoice() {    
+    if (!synth) return;
+    const voices = synth.getVoices();    
+    usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Zira')))               
+              || voices.find(v => v.lang === 'en-US' || v.lang === 'en_US');
+}
+
+if (synth && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadNativeVoice;
+}
+loadNativeVoice();
+
+function speak(text) {    
+    if (!synth) return;
+    synth.cancel();    
+    const msg = new SpeechSynthesisUtterance(text);    
+    if (usVoice) msg.voice = usVoice;    
+    msg.lang = 'en-US';
+    msg.rate = 0.85; 
+    synth.speak(msg);
+}
+
+function getSimilarity(s1, s2) {    
+    let longer = s1.length < s2.length ? s2 : s1;    
+    let shorter = s1.length < s2.length ? s1 : s2;    
+    if (longer.length === 0) return 1.0;    
+    const distance = editDistance(longer, shorter);    
+    return (longer.length - distance) / parseFloat(longer.length);
+}
+
+function editDistance(s1, s2) {    
+    s1 = s1.toLowerCase(); s2 = s2.toLowerCase();    
+    let costs = new Array();    
+    for (let i = 0; i <= s1.length; i++) {        
+        let lastValue = i;        
+        for (let j = 0; j <= s2.length; j++) {            
+            if (i == 0) costs[j] = j;            
+            else {                
+                if (j > 0) {                    
+                    let newValue = costs[j - 1];                    
+                    if (s1.charAt(i - 1) != s2.charAt(j - 1))                        
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;                    
+                    costs[j - 1] = lastValue;                    
+                    lastValue = newValue;                
+                }            
+            }        
+        }        
+        if (i > 0) costs[s2.length] = lastValue;    
+    }    
+    return costs[s2.length];
+}
+
+const questions = {    
+    A2: [        
+        {
+            q: "What item of footwear did Rob purchase during his trip to Brooklyn?", 
+            a: "Rob bought a pair of sneakers.", 
+            speech: "Rob bought a pair of sneakers.",
+            o: [
+                "Rob bought a pair of sneakers.", 
+                "Rob bought leather dress shoes.", 
+                "Rob bought winter hiking boots.", 
+                "Rob bought open-toed sandals."
+            ]
+        },        
+        {
+            q: "What was Jenny's initial meeting time proposal for their morning run?", 
+            a: "Jenny suggested meeting at 6:45 in the morning.", 
+            speech: "Jenny suggested meeting at six forty-five in the morning.",
+            o: [
+                "Jenny suggested meeting at 6:45 in the morning.", 
+                "Jenny suggested meeting at 7:45 in the morning.", 
+                "Jenny suggested meeting at 8:00 in the morning.", 
+                "Jenny suggested meeting at 6:00 in the morning."
+            ]
+        },
+        {
+            q: "What time do Jenny and Rob finally agree to meet at his hotel?", 
+            a: "They agreed to meet at 7:15 in the morning.", 
+            speech: "They agreed to meet at seven fifteen in the morning.",
+            o: [
+                "They agreed to meet at 7:15 in the morning.", 
+                "They agreed to meet at 6:45 in the morning.", 
+                "They agreed to meet at 7:45 in the morning.", 
+                "They agreed to meet at 8:15 in the morning."
+            ]
+        },
+        {
+            q: "Where does Jenny regularly go running every morning?", 
+            a: "Jenny goes running in Central Park.", 
+            speech: "Jenny goes running in Central Park.",
+            o: [
+                "Jenny goes running in Central Park.", 
+                "Jenny goes running along Brooklyn Bridge.", 
+                "Jenny goes running inside a private gym.", 
+                "Jenny goes running near her office building."
+            ]
+        },
+        {
+            q: "What reason does Rob give to explain why he bought new athletic shoes?", 
+            a: "He thinks he needs to get a bit fitter.", 
+            speech: "He thinks he needs to get a bit fitter.",
+            o: [
+                "He thinks he needs to get a bit fitter.", 
+                "His old shoes were completely worn out.", 
+                "They were on a discount clearance sale.", 
+                "He needed them for a basketball game."
+            ]
+        }
+    ],    
+    B1: [        
+        {
+            q: "How does Rob correct his own vocabulary choice when showing his new footwear to Jenny?", 
+            a: "He replaces the British term 'trainers' with the American term 'sneakers'.", 
+            speech: "He replaces the British term trainers with the American term sneakers.",
+            o: [
+                "He replaces the British term 'trainers' with the American term 'sneakers'.", 
+                "He replaces the word 'shoes' with the technical term 'running cleats'.", 
+                "He apologizes to Jenny for buying cheap athletic footwear in Brooklyn.", 
+                "He switches from English to French to describe the brand name."
+            ]
+        },        
+        {
+            q: "How do Jenny and Rob negotiate to reach a middle ground regarding their meeting time?", 
+            a: "They compromise on 7:15 after Rob rejects 6:45 and Jenny rejects 7:45.", 
+            speech: "They compromise on seven fifteen after rejecting six forty-five and seven forty-five.",
+            o: [
+                "They compromise on 7:15 after Rob rejects 6:45 and Jenny rejects 7:45.", 
+                "Jenny agrees immediately to Rob's suggestion of meeting at 7:45 AM.", 
+                "Rob surrenders completely and accepts Jenny's initial 6:45 AM plan.", 
+                "Holly intervenes and suggests they run in the late afternoon instead."
+            ]
+        },
+        {
+            q: "What contrasts exist between Jenny's day and Rob's day in New York?", 
+            a: "Jenny spent her day in meetings while Rob explored Brooklyn and met interesting people.", 
+            speech: "Jenny spent her day in meetings while Rob explored Brooklyn and met interesting people.",
+            o: [
+                "Jenny spent her day in meetings while Rob explored Brooklyn and met interesting people.", 
+                "Jenny went shopping in Manhattan while Rob worked in his hotel room all day.", 
+                "Jenny went running in the morning while Rob spent all day resting in Brooklyn.", 
+                "Both of them spent the entire morning together attending business meetings."
+            ]
+        },
+        {
+            q: "What is Holly's reaction when she learns about Rob's activities?", 
+            a: "She remarks that he must have a lot of energy to do basketball and running.", 
+            speech: "She remarks that he must have a lot of energy to do basketball and running.",
+            o: [
+                "She remarks that he must have a lot of energy to do basketball and running.", 
+                "She warns him that waking up early will make him too tired for work.", 
+                "She offers to join them for their early morning run in Central Park.", 
+                "She criticizes his decision to buy expensive sneakers in Brooklyn."
+            ]
+        },
+        {
+            q: "Where will Jenny pick up Rob for their morning run?", 
+            a: "She will come by his hotel room early in the morning.", 
+            speech: "She will come by his hotel room early in the morning.",
+            o: [
+                "She will come by his hotel room early in the morning.", 
+                "She will wait for him at the entrance of Central Park.", 
+                "They will meet at a nearby coffee shop near Brooklyn.", 
+                "She will call a taxi to meet him in front of his office."
+            ]
+        }
+    ],
+    C1: [
+        {
+            q: "Analyze the pragmatic function of Rob's hesitant filler 'Er... sure. Why not?' when accepting Jenny's invitation.", 
+            a: "It signals underlying reluctance and social obligation rather than genuine athletic enthusiasm.", 
+            speech: "It signals underlying reluctance and social obligation rather than genuine athletic enthusiasm.",
+            o: [
+                "It signals underlying reluctance and social obligation rather than genuine athletic enthusiasm.", 
+                "It demonstrates absolute commitment to changing his personal health habits.", 
+                "It indicates that he is secretly offended by Jenny's assessment of his fitness.", 
+                "It functions as a polite refusal disguised as an indirect acceptance."
+            ]
+        },
+        {
+            q: "What sociolinguistic shift occurs when Rob corrects 'trainers' to 'sneakers' in front of Jenny?", 
+            a: "He code-switches from British English to American English to adapt to his local context.", 
+            speech: "He code switches from British English to American English to adapt to his local context.",
+            o: [
+                "He code-switches from British English to American English to adapt to his local context.", 
+                "He corrects a grammatical error regarding singular and plural noun agreement.", 
+                "He adopts corporate slang to impress Jenny with his fashion awareness.", 
+                "He alters his vocal register from informal casual speech to formal prose."
+            ]
+        },
+        {
+            q: "Evaluate Holly's comment 'You must have a lot of energy' in the context of Rob's hesitant behavior.", 
+            a: "It acts as lighthearted social irony, subtly pointing out Rob's physical overextension.", 
+            speech: "It acts as lighthearted social irony, subtly pointing out Rob's physical overextension.",
+            o: [
+                "It acts as lighthearted social irony, subtly pointing out Rob's physical overextension.", 
+                "It expresses sincere admiration for Rob's elite athletic capabilities.", 
+                "It directly challenges Jenny's authority on health and morning routines.", 
+                "It provides an objective analysis of Rob's daily caloric expenditure."
+            ]
+        },
+        {
+            q: "How does the negotiation of time (6:45 vs 7:45 to 7:15) reflect power dynamics in the interaction?", 
+            a: "Jenny maintains control of the interaction by setting the final boundary that Rob accepts.", 
+            speech: "Jenny maintains control of the interaction by setting the final boundary that Rob accepts.",
+            o: [
+                "Jenny maintains control of the interaction by setting the final boundary that Rob accepts.", 
+                "Rob exerts dominance by forcing Jenny to adapt entirely to his personal sleep schedule.", 
+                "Holly mediates the conflict to ensure an equal distribution of time preferences.", 
+                "Both speakers abandon their preferences to let an external clock decide."
+            ]
+        },
+        {
+            q: "Analyze Rob's final response 'Er... yeah' to Holly's observation about his energy levels.", 
+            a: "It reflects passive acquiescence, acknowledging his self-inflicted commitment with mild exhaustion.", 
+            speech: "It reflects passive acquiescence, acknowledging his self-inflicted commitment with mild exhaustion.",
+            o: [
+                "It reflects passive acquiescence, acknowledging his self-inflicted commitment with mild exhaustion.", 
+                "It shows confident agreement with Holly's assessment of his stamina.", 
+                "It indicates that he is actively planning to cancel the running appointment.", 
+                "It reveals that he feels insulted by Holly's intrusion into his conversation."
+            ]
+        }
+    ]
+};
+
+let currentIdx = 0, levelData = [], currentLevel = "A2", recognition, isRecording = false;
+let finalTranscript = '';
+let optionSelected = false;
+
+// Mobile-Optimized Speech Recognition Init
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (e) => {
+        let interimTranscript = '';
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+                finalTranscript += e.results[i][0].transcript;
+            } else {
+                interimTranscript += e.results[i][0].transcript;
+            }
+        }
+        
+        const currentSpoken = finalTranscript || interimTranscript;
+        document.getElementById('streamText').innerText = currentSpoken || "Listening...";
+        
+        if (finalTranscript.trim().length > 0) {
+            processNeuralFeedback(finalTranscript);
+        }
+    };    
+    
+    recognition.onerror = (e) => {
+        document.getElementById('streamText').innerText = "Microphone error or permission denied. Please verify browser settings.";
+        stopAndResetSpeechEngine();
+    };
+
+    recognition.onend = () => {
+        if (isRecording) {
+            try { recognition.start(); } catch(err) {}
+        } else {
+            stopAndResetSpeechEngine();
+        }
+    };
+}
+
+function startQuiz() {    
+    unlockSpeechEngine();
+    currentLevel = document.getElementById('levelSelect').value;    
+    levelData = questions[currentLevel];    
+    currentIdx = 0;    
+    document.getElementById('setup').style.display = 'none';    
+    document.getElementById('quiz-area').style.display = 'block';    
+    loadQuestion();
+}
+
+function stopAndResetSpeechEngine() {
+    isRecording = false;
+    finalTranscript = '';
+    if (recognition) {
+        try { recognition.stop(); } catch(e) {}
+    }
+    const recordBtn = document.getElementById('recordBtn');
+    if (recordBtn) {
+        recordBtn.classList.remove('recording');
+        recordBtn.innerText = "🎤 Verify Fluency";
+    }
+}
+
+function loadQuestion() {    
+    stopAndResetSpeechEngine();
+    optionSelected = false;
+    
+    const data = levelData[currentIdx];    
+    document.getElementById('progress').innerText = `SHOE SHOPPING & RUN DRILL (${currentLevel}): ${currentIdx + 1} /${levelData.length}`;    
+    document.getElementById('quiz').innerHTML = `<div class="card"><h2 style="font-size: 1.15rem; line-height: 1.5; margin:0;">${data.q}</h2></div>`;    
+    document.getElementById('resultsBox').style.display = 'none';    
+    document.getElementById('nextBtn').style.display = 'none';    
+    document.getElementById('streamText').innerText = "Click 'Verify Fluency' to begin speaking...";
+    
+    speak(data.q);
+    
+    const options = [...data.o].sort(() => Math.random() - 0.5);
+    options.forEach(opt => {        
+        const div = document.createElement('div');        
+        div.className = 'option';        
+        div.textContent = opt;        
+        div.onclick = function() {            
+            if (optionSelected) return;
+            if (this.textContent.toLowerCase().trim() === data.a.toLowerCase().trim()) {                
+                optionSelected = true;
+                document.querySelectorAll('.option').forEach(o => o.classList.remove('correct', 'wrong'));                
+                this.classList.add('correct');                
+                speak(data.speech);              
+                document.getElementById('nextBtn').style.display = 'block';            
+            } else { 
+                this.classList.add('wrong'); 
+            }        
+        };        
+        document.querySelector('#quiz .card').appendChild(div);    
+    });
+}
+
+function toggleRecording() {    
+    unlockSpeechEngine();
+    if (recognition) { 
+        if (!isRecording) {
+            try {
+                finalTranscript = '';
+                isRecording = true;
+                recognition.start(); 
+                document.getElementById('recordBtn').classList.add('recording');
+                document.getElementById('recordBtn').innerText = "⏹ Stop Recording";
+            } catch(e) {
+                isRecording = false;
+            }
+        } else {
+            stopAndResetSpeechEngine();
+        }
+    } else {
+        alert("Speech recognition is not supported on this mobile browser. Please open in Chrome (Android) or Safari (iOS).");
+    }
+}
+
+function cleanString(str) {
+    return str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ").trim();
+}
+
+function processNeuralFeedback(transcript) {    
+    const data = levelData[currentIdx];
+    const target = data.speech;    
+    const spokenClean = cleanString(transcript);    
+    const targetClean = cleanString(target);
+    
+    let performanceScore = 0;
+    
+    if (spokenClean === targetClean) {
+        performanceScore = 100;
+    } else {
+        const charSimilarity = getSimilarity(targetClean, spokenClean);
+        
+        const targetWords = targetClean.split(' ');
+        const spokenWords = spokenClean.split(' ');
+        let matchedWords = 0;
+        targetWords.forEach(w => {
+            if (spokenWords.includes(w)) matchedWords++;
+        });
+        const wordRatio = matchedWords / targetWords.length;
+        
+        performanceScore = Math.round((charSimilarity * 0.6 + wordRatio * 0.4) * 100);
+    }
+
+    document.getElementById('resultsBox').style.display = 'block';    
+    const visual = document.getElementById('visualFeedback');    
+    const evalText = document.getElementById('evaluationText');    
+    const remedial = document.getElementById('remedialBox');    
+
+    if (performanceScore >= 90) {        
+        visual.innerHTML = `Spoken: "<span class=\"correct-word\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;    
+    } else if (performanceScore >= 70) {        
+        visual.innerHTML = `Spoken: "<span class=\"partial-word\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;        
+    } else {        
+        visual.innerHTML = `Spoken: "<span class=\"syntax-error\">${transcript}</span>"<br>Target: <strong>${target}</strong>`;    
+    }    
+
+    evalText.innerText = `Speech Calibration Score [${currentLevel}]: ${performanceScore}%`;    
+    remedial.innerHTML = "";    
+    
+    if (performanceScore >= 90) {
+        const tip = document.createElement('div');        
+        tip.className = 'remedial-tip';        
+        tip.innerHTML = "<strong>Coach Carlos O:</strong> Excellent native-like clarity for level " + currentLevel + "!";        
+        remedial.appendChild(tip);        
+        document.getElementById('nextBtn').style.display = 'block';    
+    } else if (performanceScore >= 70) {        
+        const tip = document.createElement('div');        
+        tip.className = 'remedial-tip';        
+        tip.innerHTML = "<strong>Coach Carlos O:</strong> Good attempt! Click 'Model Accent (US)' to refine your pronunciation.";        
+        remedial.appendChild(tip);        
+        document.getElementById('nextBtn').style.display = 'block';    
+    } else {
+        const tip = document.createElement('div');        
+        tip.className = 'remedial-tip';        
+        tip.innerHTML = "<strong>Coach Carlos O:</strong> Keep practicing! Click 'Model Accent (US)' to listen to the target sentence, then try speaking again.";        
+        remedial.appendChild(tip);  
+    }
+}
+
+function nextQuestion() {    
+    stopAndResetSpeechEngine();
+    currentIdx++;    
+    if (currentIdx < levelData.length) loadQuestion();    
+    else document.getElementById('quiz-area').innerHTML = "<h1 style='color: var(--success); font-size:1.5rem;'>Shopping Dialogue Module Complete!</h1><p style='font-size:1rem;'>Congratulations! You completed all exercises for level " + currentLevel + " based on the shoe shopping dialogue.</p><button onclick='location.reload()'>Restart Activity</button>";
+}
+
+function narrateCurrentAnswer() { 
+    unlockSpeechEngine();
+    if (levelData[currentIdx]) speak(levelData[currentIdx].speech); 
+}
+</script>
+</body>
+</html>
