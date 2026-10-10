@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EasyEnglishEducation - Speech Development & Correction</title>
+    <style>
+        :root {
+            --bg-dark-blue: #0a192f;
+            --bg-dark-green: #0d3b2e;
+            --card-bg: #112240;
+            --text-light-green: #64ffda;
+            --text-yellow: #ffd700;
+            --text-white: #ffffff;
+            --confidence-high: #00ff88;
+            --confidence-med: #ffd700;
+            --confidence-low: #ff5555;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark-blue);
+            color: var(--text-white);
+            margin: 0;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--bg-dark-green);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--text-light-green);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .brand-name {
+            color: var(--text-light-green);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            color: var(--text-yellow);
+            margin: 0 0 6px 0;
+            font-size: 1.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-light-green);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: var(--text-white);
+            margin: 4px 0 0 0;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background-color: var(--text-light-green);
+            color: var(--bg-dark-blue);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-record {
+            background-color: var(--text-yellow);
+            color: #000;
+        }
+
+        .btn-record.recording {
+            background-color: #ff4d4d;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .transcript-title, .feedback-title, .correction-title {
+            color: var(--text-yellow);
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .transcript-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--text-light-green);
+            border-radius: 8px;
+            padding: 14px;
+            min-height: 60px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .feedback-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 5px solid var(--text-light-green);
+            border-radius: 8px;
+            padding: 14px;
+            color: var(--text-white);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .correction-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 5px solid var(--text-yellow);
+            border-radius: 8px;
+            padding: 14px;
+            color: var(--text-white);
+            line-height: 1.5;
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        .confidence-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-light-green);
+            font-size: 0.85rem;
+            opacity: 0.8;
+            padding-bottom: 10px;
+        }
+
+        .word-high { color: var(--confidence-high); font-weight: bold; }
+        .word-med { color: var(--confidence-med); font-weight: bold; }
+        .word-low { color: var(--confidence-low); font-weight: bold; }
+        .correction-highlight { color: var(--text-light-green); font-weight: bold; }
+
+        @media (min-width: 600px) {
+            .question-box {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .btn {
+                width: auto;
+            }
+            .controls {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="brand-name">EasyEnglishEducation</div>
+        <h1>Speech Development</h1>
+        <p class="subtitle">Activity 5: Borough Market Comprehension (Beginner Present Simple)</p>
+    </header>
+
+    <div class="card">
+        <div class="question-box">
+            <div>
+                <span style="color: var(--text-light-green); font-size: 0.85rem;">Question <span id="q-num">1</span> of 10</span>
+                <p class="question-text" id="question-display">Where is Borough Market?</p>
+            </div>
+            <button class="btn" id="listen-btn" onclick="playQuestionAudio()">
+                🔊 Listen (US Male)
+            </button>
+        </div>
+        <div class="controls">
+            <button class="btn btn-record" id="record-btn" onclick="toggleRecording()">
+                🎤 Start Speaking
+            </button>
+            <span id="status-text" style="color: var(--text-light-green); font-style: italic; font-size: 0.9rem;">Ready</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="transcript-title">
+            Your Voice Transcript:
+            <br>
+            <span id="confidence-badge" class="confidence-indicator" style="display:none;"></span>
+        </div>
+        <div class="transcript-box" id="transcript-display">
+            Click "Start Speaking" and take all the time you need to answer...
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="feedback-title">Grammar & Speech Evaluation:</div>
+        <div class="feedback-box" id="feedback-display">
+            Take your time! Pauses and stuttering are completely natural when learning a language. I am listening until you press Stop.
+        </div>
+        
+        <div class="correction-box" id="correction-display" style="display: none;">
+            <div class="correction-title">Suggested Correction & Model Answer:</div>
+            <div id="correction-text"></div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="btn" id="prev-btn" onclick="navigateQuestion(-1)" disabled>Previous</button>
+        <button class="btn" id="next-btn" onclick="navigateQuestion(1)">Next Question</button>
+    </div>
+</div>
+
+<footer>
+    © Developed for educational excellence By Coach Carlos O
+</footer>
+
+<script>
+    const questionsData = [
+        {
+            question: "Where is Borough Market?",
+            keywords: ["south london", "london"],
+            idealAnswer: "Borough Market is in South London."
+        },
+        {
+            question: "Is Borough Market new or old?",
+            keywords: ["old", "very old"],
+            idealAnswer: "It is very old."
+        },
+        {
+            question: "On what days is the market open?",
+            keywords: ["thursday", "friday", "saturday"],
+            idealAnswer: "It is open on Thursday, Friday, and Saturday."
+        },
+        {
+            question: "How many stalls are at the market?",
+            keywords: ["100", "over 100", "hundred"],
+            idealAnswer: "There are over 100 stalls at the market."
+        },
+        {
+            question: "What do visitors think of Borough Market?",
+            keywords: ["love", "like"],
+            idealAnswer: "Visitors love Borough Market."
+        },
+        {
+            question: "Do people from different countries work at the market?",
+            keywords: ["yes", "they do", "different countries"],
+            idealAnswer: "Yes, people from different countries work here."
+        },
+        {
+            question: "What language do all the workers speak?",
+            keywords: ["english"],
+            idealAnswer: "They all speak English."
+        },
+        {
+            question: "Where is Marianna from?",
+            keywords: ["greece"],
+            idealAnswer: "Marianna is from Greece."
+        },
+        {
+            question: "Where are Aurore and Fabien from?",
+            keywords: ["france"],
+            idealAnswer: "They are from France."
+        },
+        {
+            question: "Where is Michèle from?",
+            keywords: ["switzerland"],
+            idealAnswer: "Michèle is from Switzerland."
+        }
+    ];
+
+    let currentIdx = 0;
+    let isRecording = false;
+    let recognition;
+    let accumulatedTranscript = '';
+    let lastConfidence = 85;
+    let isAudioUnlocked = false;
+
+    // Mobile Audio Engine Warm-Up
+    function unlockMobileSpeech() {
+        if (!isAudioUnlocked && 'speechSynthesis' in window) {
+            const silent = new SpeechSynthesisUtterance('');
+            silent.volume = 0;
+            window.speechSynthesis.speak(silent);
+            isAudioUnlocked = true;
+        }
+    }
+    document.addEventListener('touchstart', unlockMobileSpeech, { once: true });
+    document.addEventListener('click', unlockMobileSpeech, { once: true });
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true; 
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = function() {
+            document.getElementById('status-text').innerText = "Recording... Take your time!";
+        };
+
+        recognition.onresult = function(event) {
+            let sessionFinals = '';
+            let interimTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    sessionFinals += event.results[i][0].transcript + ' ';
+                    if (event.results[i][0].confidence) {
+                        lastConfidence = Math.round(event.results[i][0].confidence * 100);
+                    }
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            // Append newly finalized chunks to master history to prevent mobile overwrites
+            if (sessionFinals) {
+                accumulatedTranscript += sessionFinals;
+            }
+            
+            const liveDisplay = (accumulatedTranscript + interimTranscript).trim();
+            if (liveDisplay.length > 0) {
+                document.getElementById('transcript-display').innerText = liveDisplay;
+            }
+        };
+
+        recognition.onerror = function(event) {
+            if (event.error !== 'no-speech') {
+                document.getElementById('status-text').innerText = "Microphone error. Check permissions!";
+                stopRecordingUI();
+            }
+        };
+
+        recognition.onend = function() {
+            // Auto-restart recognition if user hasn't pressed stop (handles mobile network dropouts / pause cuts)
+            if (isRecording) {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    stopRecordingUI();
+                }
+            }
+        };
+    }
+
+    function playQuestionAudio() {
+        unlockMobileSpeech();
+        if (!('speechSynthesis' in window)) return;
+
+        const text = questionsData[currentIdx].question;
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.pitch = 0.9;
+        utterance.rate = 0.9;
+
+        const voices = window.speechSynthesis.getVoices();
+        const maleVoice = voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('George') || v.name.includes('Natural')));
+        if (maleVoice) {
+            utterance.voice = maleVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function toggleRecording() {
+        unlockMobileSpeech();
+        if (!SpeechRecognition) {
+            alert("Speech recognition is not supported in this mobile browser. Try Google Chrome on Android or Safari on iOS.");
+            return;
+        }
+
+        if (!isRecording) {
+            accumulatedTranscript = '';
+            document.getElementById('transcript-display').innerText = "Listening...";
+            document.getElementById('confidence-badge').style.display = 'none';
+            document.getElementById('correction-display').style.display = 'none';
+            
+            try {
+                isRecording = true;
+                recognition.start();
+                document.getElementById('record-btn').classList.add('recording');
+                document.getElementById('record-btn').innerText = "⏹ Stop Recording";
+            } catch (e) {
+                isRecording = false;
+            }
+        } else {
+            isRecording = false;
+            recognition.stop();
+            stopRecordingUI();
+            processFinalResult();
+        }
+    }
+
+    function stopRecordingUI() {
+        isRecording = false;
+        document.getElementById('record-btn').classList.remove('recording');
+        document.getElementById('record-btn').innerText = "🎤 Start Speaking";
+        document.getElementById('status-text').innerText = "Done!";
+    }
+
+    function processFinalResult() {
+        const finalPhrase = accumulatedTranscript.trim();
+        const transcriptEl = document.getElementById('transcript-display');
+        const badge = document.getElementById('confidence-badge');
+
+        if (!finalPhrase) {
+            transcriptEl.innerText = "No speech detected. Click Start Speaking whenever you are ready!";
+            return;
+        }
+
+        const currentData = questionsData[currentIdx];
+        const textLower = finalPhrase.toLowerCase();
+        let matchedKeywords = 0;
+        
+        currentData.keywords.forEach(kw => {
+            if (textLower.includes(kw.toLowerCase())) {
+                matchedKeywords++;
+            }
+        });
+
+        const accuracyScore = Math.round((matchedKeywords / currentData.keywords.length) * 100);
+        const totalScore = Math.round((lastConfidence * 0.4) + (accuracyScore * 0.6));
+
+        let colorClass = 'word-high';
+        let badgeBg = '#00ff88';
+        let badgeColor = '#000';
+
+        if (totalScore < 60) {
+            colorClass = 'word-low';
+            badgeBg = '#ff5555';
+            badgeColor = '#fff';
+        } else if (totalScore < 80) {
+            colorClass = 'word-med';
+            badgeBg = '#ffd700';
+            badgeColor = '#000';
+        }
+
+        transcriptEl.innerHTML = `<span class="${colorClass}">${finalPhrase}</span>`;
+        
+        badge.style.display = 'inline-block';
+        badge.style.backgroundColor = badgeBg;
+        badge.style.color = badgeColor;
+        badge.innerText = `${totalScore}% Overall Score`;
+
+        generateEvaluationAndCorrection(totalScore, accuracyScore, finalPhrase, currentData);
+    }
+
+    function generateEvaluationAndCorrection(totalScore, accuracyScore, userSpeech, data) {
+        const feedbackEl = document.getElementById('feedback-display');
+        const correctionEl = document.getElementById('correction-display');
+        const correctionTextEl = document.getElementById('correction-text');
+        
+        let feedbackMessage = "";
+
+        if (totalScore >= 85) {
+            feedbackMessage = `<strong>Excellent Answer! 🌟 Score: ${totalScore}%</strong><br>Your pronunciation and response accuracy were fantastic! You expressed your answer very clearly.`;
+        } else if (totalScore >= 65) {
+            feedbackMessage = `<strong>Good job! 👍 Score: ${totalScore}%</strong><br>You answered the question well. Pauses or minor grammar slips are completely normal—keep practicing!`;
+        } else {
+            feedbackMessage = `<strong>Courageous attempt! 💪 Score: ${totalScore}%</strong><br>Don't worry about stutters or mistakes! Every attempt brings you closer to fluency. Take a look at the model answer below to improve.`;
+        }
+
+        feedbackEl.innerHTML = feedbackMessage;
+
+        correctionEl.style.display = 'block';
+        correctionTextEl.innerHTML = `
+            <p style="margin: 5px 0;"><strong>What you said:</strong> "${userSpeech}"</p>
+            <p style="margin: 5px 0;"><strong>Model Answer:</strong> <span class="correction-highlight">"${data.idealAnswer}"</span></p>
+        `;
+    }
+
+    function navigateQuestion(direction) {
+        if (isRecording) {
+            isRecording = false;
+            recognition.stop();
+            stopRecordingUI();
+        }
+
+        currentIdx += direction;
+        
+        if (currentIdx < 0) currentIdx = 0;
+        if (currentIdx >= questionsData.length) currentIdx = questionsData.length - 1;
+
+        document.getElementById('q-num').innerText = currentIdx + 1;
+        document.getElementById('question-display').innerText = questionsData[currentIdx].question;
+        document.getElementById('transcript-display').innerText = 'Click "Start Speaking" and take all the time you need to answer...';
+        document.getElementById('feedback-display').innerText = "Take your time! Pauses and stuttering are completely natural when learning a language. I am listening until you press Stop.";
+        document.getElementById('correction-display').style.display = 'none';
+        document.getElementById('confidence-badge').style.display = 'none';
+        document.getElementById('status-text').innerText = "Ready";
+
+        document.getElementById('prev-btn').disabled = (currentIdx === 0);
+        document.getElementById('next-btn').disabled = (currentIdx === questionsData.length - 1);
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {}; 
+    }
+</script>
+
+</body>
+</html>
